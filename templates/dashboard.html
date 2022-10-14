@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Blocks</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="{{url_for('static',filename = 'images/logo.ico')}}" >
+		<link rel="stylesheet" href="{{url_for('static',filename = 'css/dashboard.css')}}">
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+		<style>
+		html{
+			scroll-behavior: smooth;
+		}
+
+		body{
+			background-color: white;
+			justify-content: center;
+			font-family: 'Courier New', Courier, monospace;
+		}
+		.dark-mode{
+			background-color: rgb(0, 0, 0, 0.8);
+			color: white;
+		}
+
+		.mode1{
+			position: fixed;
+			bottom: 10px;
+			right: 20px;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode2{
+			position: fixed;
+			bottom: 10px;
+			right: 60px;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode3{
+			position: fixed;
+			bottom: 10px;
+			right: 96%;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode1-content{
+			width: 30px;
+			border: rgb(0, 0, 0, 0.8);
+			background-color: rgb(0, 0, 0, 0.8);
+			color: white;
+			cursor: pointer;
+			user-select: none;
+			border-radius: 100%;
+		}
+
+		.mode2-content{
+			width: 30px;
+			background-color: white;
+			color: rgb(0, 0, 0, 0.8);
+			cursor: pointer;
+			user-select: none;
+			border-radius: 100%;
+		}
+
+		.bi{
+			font-size: larger;
+			cursor: pointer;
+			user-select: none;
+		}
+		.file-upload > input {
+				display: none;
+		}
+
+		.file-upload img {
+				cursor: pointer;
+		}
+		.dropdown-toggle::after {
+            content: none;
+        }
+		.dropdown-menu-like{
+			display: none;
+		}
+		.dropdown-like:hover .dropdown-menu-like {display: block;}
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+		}
+
+
+	</style>
+</head>
+	
+	<body >
+		<div id = "top"></div>
+		<div class="mode2">
+			<a href="#top"><button class= "mode1-content" id="button2">
+				<i class="bi bi-arrow-up-short" style="margin: auto;" id = "up"></i>
+			</button></a>
+		</div>
+		<div class="mode1">
+			<button onmousedown="mode()" class= "mode1-content" id="button1">
+				<i class="bi bi-moon-fill" style="margin: auto;" id = "icon1"></i>
+			</button>
+		</div>
+		<div class="mode3">
+			<a href="{{url_for('home')}}">
+				<button class= "mode1-content" id="button3">
+					<i class="bi bi-house" style="margin: auto;" id = "home"></i>
+				</button>
+			</a>	
+		</div>
+    <div class="modal-content3">
+			{% set img_path = url_for('static', filename = image_path)%}
+			{% if current_user.is_authenticated and check == 'true'%} 
+				<div class="container">
+					<a href="/profilepict/{{current_user.id}}"><img src={{img_path}} style="width: 100%; clip-path: circle()"></a>
+					<h4 style="text-align: center; padding-top: 10%;"><b>{{name}}</b></h4>
+				</div>
+			{% else %}
+				<div class="container">
+					<a href="/view/{{user_id}}"><img src={{img_path}} style="width: 100%; clip-path: circle()"></a>
+					<h4 style="text-align: center; padding-top: 10%;"><b>{{name}}</b></h4>
+				</div>
+
+			{% endif %}
+		
+			
+			{% if current_user.is_authenticated and check == 'false' and friend == "false"%}
+				
+					{% if friend_request_check == 'true' and status == "sender" %}
+						<form method="POST" action="/unsent_friend_request/{{current_user.id}}/{{user_id}}" id = "unsent">
+							<p style="text-align: center;"><button type="submit" id = 'submit' class="btn btn-primary">Friend request sent</button></p>
+						</form>
+					{% elif friend_request_check == 'true' and status == "receiver" %}
+							<div class="text-center">
+								<div class="d-flex justify-content-around">
+									<form method="POST" action="/accept/{{friend_request.receiver_id}}/{{friend_request.author_id}}" id = "accept">
+										<p style="text-align: center;"><button type="submit" id = 'submit' class="btn btn-primary">Accept</button></p>
+									</form>
+									<form method="POST" action="/decline/{{friend_request.receiver_id}}/{{friend_request.author_id}}" id = "decline">
+										<p style="text-align: center;"><button type="submit" id = 'submit' class="btn btn-primary">Decline</button></p>
+									</form>
+								</div>
+							</div>	
+							<script>
+								$(document).on('submit','#accept', function(e){
+									e.preventDefault()
+									$.ajax({
+										type: 'POST',
+										url: '/accept/{{friend_request.receiver_id}}/{{friend_request.author_id}}',
+										success:function(){
+											window.location.reload()
+										}
+									})
+								})
+				
+								$(document).on('submit','#decline', function(e){
+									e.preventDefault()
+									$.ajax({
+										type: 'POST',
+										url: '/decline/{{friend_request.receiver_id}}/{{friend_request.author_id}}',
+										success:function(){
+											window.location.reload()
+										}
+									})
+								})
+							</script>	
+					{% else %}
+						<form method="POST" action="/add_friend/{{current_user.id}}/{{name}}" id = "add-friend">
+							<p style="text-align: center;"><button type="submit" id = 'submit' class="btn btn-primary">Add friend <i class="bi bi-person-plus-fill"></i></button></p>
+						</form>
+					{% endif %}
+			{% elif current_user.is_authenticated and check == 'false' and friend == "true" %}
+				<form method="POST" action="/unfriend/{{current_user.id}}/{{user_id}}" id = "unfriend">
+					<p style="text-align: center;"><button type="submit" id = 'submit' class="btn btn-primary">Unfriend</button></p>
+				</form>
+			{% endif %}
+				
+		</div>
+		
+		<br>
+		<br>
+		
+    <div class="card-header d-flex justify-content-between align-items-center bg-light" id="card1" style="width: 55%; margin: auto; text-align: center; border-radius: 16px; ">
+			<a><button class="button1-change" id = "post" onclick="change1()" >Post</button></a>
+			<a><button class="button1" id = "about" onclick="change2()">About</button></a>
+			<a><button class="button1" id = "friend" onclick="change3()">Friend</button></a>
+			{% if current_user.is_authenticated and check == 'true'%} 
+				<div class="dropend">
+					<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" onclick="change4()">
+						Settings
+					</button>				
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+						<li><a class="dropdown-item" href="/get_img/{{current_user.id}}" >View profile picture</a></li>                  
+						<li><a class="dropdown-item" href="/profilepict/{{current_user.id}}" >Change profile picture</a></li>
+						<li><a class="dropdown-item" href="{{url_for('passchange')}}" >Change password</a></li>
+						<li><a class="dropdown-item" onclick="document.getElementById('id01').style.display='block'" >Delete account</a></li>
+						<li><a class="dropdown-item" href="{{url_for('logout')}}" >Log out</a></li>
+					</ul>
+				</div>
+			{% endif %} 
+		</div>
+    <br>
+		<div id = "post_view">
+			{% if posts|length == 0 %}
+			<div class="card-header d-flex justify-content-between bg-light" style="width: 55%; margin: auto; text-align: center; border-radius: 16px">
+				<p>No posts</p>
+			</div>
+
+			{% endif %}
+			{% for post in posts[::-1]%}
+			<div class="card bg-light " style="width: 55%; margin: auto; border-radius: 16px; border: transparent;" id = "{{post.id}}">
+			
+				<div class="card-header d-flex justify-content-between align-items-center bg-light" style="width: 100%; margin: auto; text-align: center; border-radius: 16px; color: black; ">
+					<a  href="/dashboard/{{post.author_id}}" style="color: black;font-size: large; text-decoration: none;"><img src="{{url_for('static', filename=post.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{post.author}} </b></a> {{post.date_created}} 
+					{% if current_user.id == post.author_id %}
+					<div class="dropdown">
+						<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-caret-down-fill"></i>
+						</button>				
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+							<li><button class="dropdown-item" type="submit" onclick="del_post('{{post.id}}')">Delete</button></li> 
+						</ul>
+					</div>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<div class="card-text" style="color: black;">
+						{{post.text}}
+					</div>
+					<br>
+					{% if post.image != "no" %}
+					<div class="card-img-bottom">
+						{% set img_path = url_for('static' , filename = post.image)%}
+						<img src={{img_path}} style="width : 100%" >
+					</div>
+					{% endif %}
+					<br>
+					<div class="card-footer  d-flex justify-content-between align-items-center" style="width: 100%; margin: auto; text-align: center; border-radius: 16px; ">
+							<a style="color: black;" title="Comment" href="#comments-{{post.id}}" data-bs-toggle="collapse"><i class="bi bi-chat-left-text-fill" ></i></a>
+							<div class="card-text ">
+									{% if post.like|length > 0  %}
+										<div class="dropdown dropdown-like">
+											
+											{% if current_user.id in post.like|map(attribute='author_id')|list %}
+												<button type="submit" id="like-btn-{{post.id}}" style="border: transparent; background-color: transparent;" title="Like" onclick="like('{{post.id}}', '{{user_id}}')"><i class="bi bi-hand-thumbs-up-fill" id="like-{{post.id}}" style="color: dodgerblue; font-style: normal; font-size: medium;"> {{post.like|length}}</i></button> 
+											{% else %}
+												<button type="submit" id="like-btn-{{post.id}}" style="border: transparent; background-color: transparent;" title="Like" onclick="like('{{post.id}}', '{{user_id}}')"><i class="bi bi-hand-thumbs-up" id="like-{{post.id}}" style="color: dodgerblue; font-style: normal; font-size: medium;"> {{post.like|length}}</i></button> 
+											{% endif %}
+											
+									 		
+											<ul class="dropdown-menu dropdown-menu-like" aria-labelledby="dropdownMenuButton1" id = "like-list-{{post.id}}">
+												{% for like in post.like %}
+													<li id="like-count-{{like.author_id}}-{{post.id}}"><a class="dropdown-item" href="/dashboard/{{like.author_id}}" title=" {{like.date_created}} " ><img src="{{url_for('static', filename=like.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{like.author}} </b></a></li>
+												{% endfor %}
+											</ul>
+										</div>	
+									{% else %}
+										<div class="dropdown dropdown-like">
+
+											{% if current_user.id in post.like|map(attribute='author_id')|list %}
+												<button type="submit" id="like-btn-{{post.id}}" style="border: transparent; background-color: transparent;" title="Like" onclick="like('{{post.id}}', '{{user_id}}')"><i class="bi bi-hand-thumbs-up-fill" id="like-{{post.id}}" style="color: dodgerblue; font-style: normal; font-size: medium;"> {{post.like|length}}</i></button> 
+											{% else %}
+												<button type="submit" id="like-btn-{{post.id}}" style="border: transparent; background-color: transparent;" title="Like" onclick="like('{{post.id}}', '{{user_id}}')"><i class="bi bi-hand-thumbs-up" id="like-{{post.id}}" style="color: dodgerblue; font-style: normal; font-size: medium;"> {{post.like|length}}</i></button> 
+											{% endif %}
+											<ul class="dropdown-menu dropdown-menu-like" aria-labelledby="dropdownMenuButton1" id = "like-list-{{post.id}}">
+													<li id = "null-{{post.id}}"><a class="dropdown-item">No likes</a></li>
+											</ul>
+										</div>
+
+							
+									{% endif %}
+								
+							</div>
+						
+						{% if post.comment|length == 0 %}
+							<a data-bs-toggle="collapse" href="#comments-{{post.id}}" style="text-decoration: none;" role="button"><small class="text-muted" >No comment</small></a>
+						{% else %}
+							<a data-bs-toggle="collapse" href="#comments-{{post.id}}" style="text-decoration: none;" role="button"><small class="text-muted" ><span id="comment-display-{{post.id}}">{{post.comment|length}}</span> comments</small></a>
+						{% endif %}
+					</div>
+					<hr>
+					<div class="collapse" id="comments-{{post.id}}">
+						<div class="card-body bg-light ">
+							<div id = "commentl-{{post.id}}">
+								{% for comment in post.comment %}
+								<div class="card-text d-flex " style="color: black" id = "cmt-div-{{comment.id}}">
+									{% if current_user.id == comment.author_id %}
+										<div class="dropdown">
+											<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="bi bi-caret-down-fill" style="font-size: small;"></i>
+											</button>				
+											<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+												<li><button class="dropdown-item" type="submit" onclick="del('{{post.id}}', '{{comment.id}}')">Delete</button></li> 
+												
+												<li><a data-bs-toggle="collapse" href="#edit-comment-{{post.id}}-{{comment.id}}" style="text-decoration: none;" class="dropdown-item">Edit</a></li> 
+						
+											</ul>
+				
+										</div>
+									{% endif %}
+									<p title="{{comment.date_created}}" id = "cmt-{{comment.id}}"><a  href="/dashboard/{{comment.author_id}}" style="color: black;font-size: large; text-decoration: none;"><img src="{{url_for('static', filename=comment.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{comment.author}} </b></a>: {{comment.text}}</p>
+								
+								</div>
+								<div id = "edit-comment-{{post.id}}-{{comment.id}}" class="collapse">
+									<div class="card-text d-flex " style="color: black">
+										<a class="btn-close" data-bs-toggle="collapse" href="#edit-comment-{{post.id}}-{{comment.id}}" style="text-decoration: none; font-size: x-small;" role="button" href=""></a>
+										<input type="text" placeholder="Edit..." name="edited_comment" id = "comment-edited-{{post.id}}-{{comment.id}}" style="width: 95%; border-radius: 16px; border: 1px solid rgb(0, 0, 0, 0.1) ; background-color: transparent; text-indent: 15px;">
+										<button type="submit" style="border: transparent; background-color: transparent;" id="submit" value = '{{post.id}}' title="Comment" onclick = "edit_comment('{{post.id}}','{{comment.id}}')"><i class="bi bi-box-arrow-up" style="color: black;" title="Update" onclick="like_change()"></i></button>
+									</div> 
+									<br>
+								</div>
+								
+								{% endfor %}
+							</div>
+							<div class="card-body d-flex justify-content-between">
+								<input type="text" placeholder="Comment something..." name="comment" id = "comment-{{post.id}}" style="width: 95%; border-radius: 16px; border: 1px solid rgb(0, 0, 0, 0.1) ; background-color: transparent; text-indent: 15px;">
+								<button style="border: transparent; background-color: transparent;" title="Comment" onclick="comment('{{post.id}}')"><i class="bi bi-send" style="color: black;" ></i></button>
+							</div>	
+							
+							<br>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<script>
+			
+
+				$(document).on('submit','#delete-post-{{post.id}}', function(e){
+					e.preventDefault()
+					$.ajax({
+						type:'POST',
+						url:'/delete_post/{{post.id}}',
+						
+						success:function(){
+							
+							window.location.reload()
+							
+							
+						}
+					})
+				})
+
+
+				
+			</script>
+			<br>
+		{% endfor %}
+		</div>
+		<div id = "about_view">
+			<div id = "about_display" title="" class="card-header d-flex justify-content-between bg-light" style="width: 55%; margin: auto; text-align: center; border-radius: 16px" >{{about}}</div>
+			<div class="card-header d-flex justify-content-between bg-light" style="width: 55%; margin: auto; text-align: center; border-radius: 16px">
+				<input id = "about_text" type="text" placeholder="Write something..." style="width: 96%; border-radius: 16px; border: transparent ; background-color: transparent; text-indent: 15px;">
+				<button style="border: transparent; background-color: transparent;" type="submit" title="Update your bio" onclick="about('{{user_id}}')"><i class="bi bi-journal-arrow-up" style="color: black;" ></i></button>
+			</div>
+		</div>
+		<div id = "friend_view">
+			<div class="card bg-light " style="width: 55%; margin: auto; border-radius: 16px; border: transparent;">
+				{% if friend_check_ == "true" %}
+					{% for friend in friends1 %}
+						<div class="card-header d-flex justify-content-between bg-light" style="width: 100%; margin: auto; text-align: center; border-radius: 16px">
+							{% set image_path = url_for('static', filename=friend.friend_img_path) %}
+							{% if current_user.id == friend.user_id %}
+								<a href="/dashboard/{{friend.friend_id}}" style="text-decoration: none; color: black;"><img src={{image_path}} style="width: 35px; clip-path: circle()"> <strong>{{friend.friend}}</strong></a>
+								<div class="dropdown">
+									<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+										{{friend.date_created}} <i class="bi bi-caret-down-fill" style="font-size: small;"></i>
+									</button>				
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+										<form method="POST" action="/unfriend/{{current_user.id}}/{{friend.friend_id}}" id = "unfriend2-{{friend.id}}">
+											<li><button class="dropdown-item" type="submit" id = "submit">Unfriend</button></li> 
+										</form>	
+										
+				
+									</ul>
+		
+								</div>
+								<script>
+									$(document).on('submit','#unfriend2-{{friend.id}}', function(e){
+										e.preventDefault()
+										$.ajax({
+											type: 'POST',
+											url: '/unfriend/{{current_user.id}}/{{friend.friend_id}}',
+											success:function(){
+												window.location.reload()
+											}
+										})
+									})
+								</script>
+							{% else %}
+								<a href="/dashboard/{{friend.friend_id}}" style="text-decoration: none; color: black;"><img src={{image_path}} style="width: 35px; clip-path: circle()"> <strong>{{friend.friend}}</strong></a> {{friend.date_created}}
+							{% endif %}
+
+						</div>
+					{% endfor %}
+				{% else %}
+					<div class="card-header d-flex justify-content-between bg-light" style="width: 100%; margin: auto; text-align: center; border-radius: 16px">
+						<p>No friends</p>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		<script>
+			$(document).on('submit','#add-friend', function(e){
+				e.preventDefault()
+				$.ajax({
+					type: 'POST',
+					url: '/add_friend/{{current_user.id}}/{{name}}',
+					success:function(){
+						window.location.reload()
+					}
+				})
+			})
+
+			$(document).on('submit','#unsent', function(e){
+				e.preventDefault()
+				$.ajax({
+					type: 'POST',
+					url: '/unsent_friend_request/{{current_user.id}}/{{user_id}}',
+					success:function(){
+						window.location.reload()
+					}
+				})
+			})
+
+			$(document).on('submit','#unfriend', function(e){
+				e.preventDefault()
+				$.ajax({
+					type: 'POST',
+					url: '/unfriend/{{current_user.id}}/{{user_id}}',
+					success:function(){
+						window.location.reload()
+					}
+				})
+			})
+
+			
+
+		</script>
+		<script src="{{url_for('static', filename = 'js/change.js')}}"></script>
+		<script src="{{url_for('static', filename = 'js/about.js')}}"></script>
+		<script src="{{url_for('static', filename='js/comment.js')}}"></script>
+		<script src="{{url_for('static', filename='js/edit-comment.js')}}"></script>
+		<script src="{{url_for('static', filename='js/del.js')}}"></script>
+		<script src="{{url_for('static', filename='js/del_post.js')}}"></script>
+		<script src="{{url_for('static', filename='js/like.js')}}"></script>
+
+
+		
+
+		<script>
+			
+			function picClose(){
+				document.getElementById("temPic").style.display = "none"
+				document.getElementById("picButton").style.display = 'none'
+
+				var x = document.querySelector("#image-input1")
+				x.value = ''
+			}
+		</script>
+		<script>
+			document.getElementById("picButton").style.display = 'none'
+
+		</script>	
+		<script>
+			$(document).ready(() => {
+					$("#image-input1").change(function () {
+							const file = this.files[0];
+							if (file) {
+									let reader = new FileReader();
+									reader.onload = function (event) {
+											$("#temPic")
+												.attr("src", event.target.result);
+									};
+									reader.readAsDataURL(file);
+							}
+					});
+			});
+		</script>	
+		
+	
+		<script src="{{url_for('static', filename='js/main.js')}}"></script>
+		<script src="{{url_for('static', filename='js/about.js')}}"></script>
+		
+		<script>
+			function mode(){
+				x = document.getElementById("button1");
+				m = document.getElementById("button2");
+				n = document.getElementById("button3");
+				y= document.body;
+				z = document.getElementById("icon1");
+
+				x.classList.toggle("mode2-content");
+				y.classList.toggle("dark-mode");
+				m.classList.toggle("mode2-content");
+				n.classList.toggle("mode2-content")
+				
+				if (z.className == "bi bi-moon-fill"){
+					z.className = "bi bi-brightness-high-fill"
+				}else{
+					z.className = "bi bi-moon-fill"
+				}
+
+			}
+
+
+
+
+
+		</script>
+	
+</body>
+</html>

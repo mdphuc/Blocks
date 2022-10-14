@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <title>Blocks</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="{{url_for('static',filename = 'images/logo.ico')}}" >
+  <link rel="stylesheet" href="{{url_for('static',filename = 'css/profile.css')}}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    input[type = "file"]{
+      display: none;
+    }
+  </style>
+
+</head>
+<body id="myPage" style="background-color: rgb(0,0,0,0.8); width: 100%; height: 100%;">
+  <form class="modal-content" enctype="multipart/form-data" method="post" style="text-align: center;">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %} 
+          {% for category, message in messages %}
+            {% if category == 'error' %}
+              <div class="alert alert-danger alert-dismissable" role = "alert">
+                <strong>{{ message }}</strong>
+              </div>
+            {% endif %}
+            {% if category == 'info' %}
+            <div class="alert alert-success alert-dismissable" role = "alert">
+              <strong>{{ message }}</strong>
+            </div> 
+            {% endif %} 
+          {% endfor %} 
+        {% endif %}
+      {% endwith %}
+      <label for="image_input" style="width: 100%; background-color: dodgerblue; padding: 14px 20px;color: white;border: none;cursor: pointer;">
+        Choose an image
+        
+        <span class="material-icons material-icons-outlined">add_photo_alternate</span>&nbsp;
+      </label>
+      <input type="file" accept="image/png, image/jpg, image/jpeg" id="image_input" onchange="upload()" name="pic" style="color: white; background-color: dodgerblue;">
+      
+      <form method="POST" action="/profilepict/{{current_user.id}}">
+        <input type="submit" value="Change profile picture" name="submit">
+      </form>
+      <div id="display_image" class="image"></div>
+      <br>
+      <a href="{{url_for('home')}}" >Return to Home Page</a><br>
+      <a href="/dashboard/{{current_user.id}}" >Return to Dashboard Page</a>
+    </div>
+
+  </form>
+  <script>
+    const image_input = document.querySelector("#image_input");
+    var uploaded_image = "";
+    
+    image_input.addEventListener("change", function(){
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        uploaded_image = reader.result;
+        document.querySelector("#display_image").style.backgroundImage = `url(${uploaded_image})`;
+
+      });
+      reader.readAsDataURL(this.files[0]);
+    })
+  </script>
+
+
+</body>
+</html>

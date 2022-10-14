@@ -1,0 +1,57 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <title>Blocks</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" href="{{url_for('static',filename = 'images/logo.ico')}}" >
+  <link rel="stylesheet" href="{{url_for('static',filename = 'css/main.css')}}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+<body id="myPage" style="background-color: rgb(0,0,0,0.8); width: 100%; height: 100%;">
+  <form class="modal-content" method="post">
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'error' %}
+              <div class="alert alert-danger alert-dismissable" role = "alert">
+                <strong>{{ message }}</strong>
+              </div>
+            {% endif %}
+            {% if category == 'info' %}
+            <div class="alert alert-success alert-dismissable" role = "alert">
+              <strong>{{ message }}</strong>
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <label for="uname"><b>Username or Email</b></label>
+      <input type="text" placeholder="Enter Username or Email" name="uname" required>
+      <label for="psw"><b>Password </b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+      <br>
+      <button type="submit" style="font-size: 17px;">Login</button>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label>
+      
+      <p>Forgot<a href="{{url_for('recovery')}}"> password?</a></p>  
+      <p><a href="register">Don't have account</a></p>
+      <p><a href="{{url_for('home')}}"> Return to home page </a></p>
+        
+      
+    </div>
+
+  </form>
+
+</body>
+</html>

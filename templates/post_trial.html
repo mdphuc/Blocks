@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Blocks</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="{{url_for('static',filename = 'images/logo.ico')}}" >
+		<link rel="stylesheet" href="{{url_for('static',filename = 'css/dashboard.css')}}">
+		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+		<style>
+		html{
+			scroll-behavior: smooth;
+		}
+
+		body{
+			background-color: white;
+			justify-content: center;
+			font-family: 'Courier New', Courier, monospace;
+		}
+		.dark-mode{
+			background-color: rgb(0, 0, 0, 0.8);
+			color: white;
+		}
+		.blinking {
+			animation-name: blinking;
+			animation-duration: 1.8s;
+		}
+
+		@keyframes blinking {
+			0% {  border:  2.3px solid white;}
+			50% {  border:  2.3px solid dodgerblue;}
+			100% {  border:  2.3px solid white;}
+		}
+
+		.mode1{
+			position: fixed;
+			bottom: 10px;
+			right: 20px;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode2{
+			position: fixed;
+			bottom: 10px;
+			right: 60px;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode3{
+			position: fixed;
+			bottom: 10px;
+			right: 96%;
+			z-index: 99;
+			width:auto;
+		}
+
+		.mode1-content{
+			width: 30px;
+			border: rgb(0, 0, 0, 0.8);
+			background-color: rgb(0, 0, 0, 0.8);
+			color: white;
+			cursor: pointer;
+			user-select: none;
+			border-radius: 100%;
+		}
+
+		.mode2-content{
+			width: 30px;
+			background-color: white;
+			color: rgb(0, 0, 0, 0.8);
+			cursor: pointer;
+			user-select: none;
+			border-radius: 100%;
+		}
+
+		.bi{
+			font-size: larger;
+			cursor: pointer;
+			user-select: none;
+		}
+		.file-upload > input {
+				display: none;
+		}
+
+		.file-upload img {
+				cursor: pointer;
+		}
+		.dropdown-toggle::after {
+            content: none;
+        }
+		
+		.dropdown-menu-like{
+			display: none;
+		}
+		.dropdown-like:hover .dropdown-menu-like {display: block;}
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+		}
+
+
+	</style>
+</head>
+	<body>
+		<div id = "top"></div>
+		<div class="mode2">
+			<a href="#top"><button class= "mode1-content" id="button2">
+				<i class="bi bi-arrow-up-short" style="margin: auto;" id = "up"></i>
+			</button></a>
+		</div>
+		<div class="mode1">
+			<button onmousedown="mode()" class= "mode1-content" id="button1">
+				<i class="bi bi-moon-fill" style="margin: auto;" id = "icon1"></i>
+			</button>
+		</div>
+		<div class="mode3">
+			<a href="{{url_for('home')}}">
+				<button class= "mode1-content" id="button3">
+					<i class="bi bi-house" style="margin: auto;" id = "home"></i>
+				</button>
+			</a>	
+		</div>
+		
+		<div class="modal-content3">
+			{% set img_path = url_for('static', filename = current_user.pic.img_path)%}
+			<div class="container">
+				<a href="/dashboard/{{current_user.id}}"><img src={{img_path}} style="width: 100%; clip-path: circle();"></a>
+				<h4 style="text-align: center; "><b>{{current_user.username}}</b></h4>
+			</div>
+		</div>
+		
+		
+		<div class="card-header d-flex justify-content-between bg-light" style="width: 55%; margin: auto; text-align: center; border-radius: 16px">
+			<input type="text" placeholder="What do you think?"  onclick="document.getElementById('id01').style.display='block'" id = "caption" style="width: 100%; border-radius: 16px; border: transparent ; background-color: transparent; text-indent: 15px;">
+			<i class="bi bi-lightbulb" style="color: black;"></i>
+		</div>
+		<br>
+		<br>
+		<div class="modal" id = "id01">
+			<div class="card bg-light animate" style="width: 55%; margin: 5% auto 15% auto; text-align: center; border-radius: 16px; border: transparent">
+				<div class="card-header d-flex justify-content-between align-items-center bg-light" style="width: 100%; margin: auto; border-radius: 16px; ">
+					<p style="color: black;font-size: large;"><img src={{img_path}} style="width: 35px; clip-path: circle()"><b> {{current_user.username}}</b></p>
+				</div>
+				<form method="post" enctype="multipart/form-data" action="/create_post/{{current_user.id}}">
+					<div class="card-body d-flex justify-content-between align-items-center bg-light">
+						<input type="text" placeholder="Write something..." name="caption" onclick="document.getElementById('id01').style.display='block'" id = "caption" style="width: 91%; border-radius: 16px; border: 1px solid rgb(0, 0, 0, 0.1) ; background-color: transparent; text-indent: 15px;">
+						<div class="file-upload">
+							<label for="image-input1">
+								<i class="bi bi-images" style="color: black; margin: auto;" title="Image and Video"></i>
+							</label>
+							<label for="submit1">
+								<i class="bi bi-file-earmark-arrow-up" style="color: black; margin: auto;" title="Post"></i>
+							</label>
+							<input type="submit" id = "submit1">
+							<input type="file" accept="image/png, image/jpg, image/jpeg, video/mp4" id="image-input1" name="pic" onchange="fileCheck2()">
+						</div>
+					</div>
+				</form>
+				<div class="card-body" style="width: 100%;" id = "temPost">
+					<button class="btn-close" id = "picButton" onclick="picClose()"></button>
+					<img id = 'temPic' class="card-img-bottom" src="#" alt=' ' >
+					<input type="text" style="display: none;" id = "temp">
+				</div>
+			</div>
+		</div>
+		
+		
+		{% for post in posts%}
+			<div class="" style="width: 55%; border-radius: 16px; margin: auto; border : 2.3px solid white;background-color: transparent;" id = "blink-{{post.id}}">
+			<div class="card bg-light " style="width: 100%; margin: auto; border-radius: 16px; border: transparent;" id = "{{post.id}}">
+			
+				<div class="card-header d-flex justify-content-between align-items-center bg-light" style="width: 100%; margin: auto; text-align: center; border-radius: 16px; color: black; ">
+					<a  href="/dashboard/{{post.author_id}}" style="color: black;font-size: large; text-decoration: none;"><img src="{{url_for('static', filename=post.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{post.author}} </b></a> {{post.date_created}} 
+					{% if current_user.id == post.author_id %}
+					<div class="dropdown">
+						<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="bi bi-caret-down-fill"></i>
+						</button>				
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+							<form method="POST" action="/delete_post/{{post.id}}" id = "delete-post-{{post.id}}">
+								<li><button class="dropdown-item" type="submit">Delete</button></li> 
+							</form>	                 
+						</ul>
+					</div>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<div class="card-text" style="color: black;">
+						{{post.text}}
+					</div>
+					<br>
+					{% if post.image != "no" %}
+					<div class="card-img-bottom">
+						{% set img_path = url_for('static' , filename = post.image)%}
+						<img src={{img_path}} style="width : 100%" >
+					</div>
+					{% endif %}
+					<br>
+					<div class="card-footer  d-flex justify-content-between align-items-center" style="width: 100%; margin: auto; text-align: center; border-radius: 16px; ">
+							<a style="color: black;" title="Comment" href="#comments-{{post.id}}" data-bs-toggle="collapse"><i class="bi bi-chat-left-text-fill" ></i></a>
+							<div class="card-text ">
+								<form method="POST" action="/like/{{post.id}}/{{current_user.id}}" id = "like-post-{{post.id}}">
+									{% if post.like|length > 0  %}
+										<div class="dropdown dropdown-like">
+											
+											{% if current_user.id in post.like|map(attribute='author_id')|list %}
+											<button type="submit" id="submit" style="border: transparent; background-color: transparent;" value = '{{post.id}}' title="Like" ><i class="bi bi-hand-thumbs-up-fill" id="like-{{post.id}}" style="color: dodgerblue;"></i></button> 
+											{% else %}
+												<button type="submit" id="submit" style="border: transparent; background-color: transparent;" value = '{{post.id}}' title="Like" ><i class="bi bi-hand-thumbs-up" id="like-{{post.id}}" style="color: dodgerblue;"></i></button> 
+											{% endif %}
+											
+											{{post.like|length}}
+											<ul class="dropdown-menu dropdown-menu-like" aria-labelledby="dropdownMenuButton1">
+												{% for like in post.like %}
+													<li><a class="dropdown-item" href="/dashboard/{{like.author_id}}" title=" {{like.date_created}} "><img src="{{url_for('static', filename=like.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{like.author}} </b></a></li>
+												{% endfor %}
+											</ul>
+										</div>	
+									{% else %}
+										{% if current_user.id in post.like|map(attribute='author_id')|list %}
+											<button type="submit" id="submit" style="border: transparent; background-color: transparent;" value = '{{post.id}}' title="Like" ><i class="bi bi-hand-thumbs-up-fill" id="like-{{post.id}}" style="color: dodgerblue;"></i></button> 
+										{% else %}
+											<button type="submit" id="submit" style="border: transparent; background-color: transparent;" value = '{{post.id}}' title="Like" ><i class="bi bi-hand-thumbs-up" id="like-{{post.id}}" style="color: dodgerblue;"></i></button> 
+										{% endif %}
+										{{post.like|length}}
+									{% endif %}
+								</form>
+							</div>
+						
+						{% if post.comment|length == 0 %}
+							<a data-bs-toggle="collapse" href="#comments-{{post.id}}" style="text-decoration: none;" role="button"><small class="text-muted" >No comment</small></a>
+						{% else %}
+							<a data-bs-toggle="collapse" href="#comments-{{post.id}}" style="text-decoration: none;" role="button"><small class="text-muted" ><span id="comment-display-{{post.id}}">{{post.comment|length}}</span> comments</small></a>
+						{% endif %}
+					</div>
+					<hr>
+					<div class="collapse" id="comments-{{post.id}}">
+						<div class="card-body bg-light ">
+
+							{% for comment in post.comment %}
+							<div class="card-text d-flex " style="color: black">
+								{% if current_user.id == comment.author_id %}
+									<div class="dropdown">
+										<button class="button1 dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+											<i class="bi bi-caret-down-fill" style="font-size: small;"></i>
+										</button>				
+										<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">  
+											<form method="POST" action="/delete_comment/{{post.id}}/{{comment.id}}" id = "delete-comment-{{post.id}}-{{comment.id}}">
+												<li><button class="dropdown-item" type="submit">Delete</button></li> 
+											</form>	
+											
+											<li><a data-bs-toggle="collapse" href="#edit-comment-{{post.id}}-{{comment.id}}" style="text-decoration: none;" class="dropdown-item">Edit</a></li> 
+					
+										</ul>
+			
+									</div>
+								{% endif %}
+								<p title="{{comment.date_created}}"><a  href="/dashboard/{{comment.author_id}}" style="color: black;font-size: large; text-decoration: none;"><img src="{{url_for('static', filename=comment.author_img_path)}}" style="width: 35px; clip-path: circle()"><b> {{comment.author}} </b></a>: {{comment.text}}</p>
+							
+							</div>
+							<div id = "edit-comment-{{post.id}}-{{comment.id}}" class="collapse">
+								<form method="POST" action="/edit_comment/{{post.id}}/{{comment.id}}" id = "edit-comments-{{post.id}}-{{comment.id}}">
+									<div class="card-text d-flex " style="color: black">
+										<a class="btn-close" data-bs-toggle="collapse" href="#edit-comment-{{post.id}}-{{comment.id}}" style="text-decoration: none; font-size: x-small;" role="button" href=""></a>
+										<input type="text" placeholder="Edit..." name="edited_comment" id = "comment-edited-{{post.id}}-{{comment.id}}" style="width: 95%; border-radius: 16px; border: 1px solid rgb(0, 0, 0, 0.1) ; background-color: transparent; text-indent: 15px;">
+										<button type="submit" style="border: transparent; background-color: transparent;" id="submit" value = '{{post.id}}' title="Comment" ><i class="bi bi-box-arrow-up" style="color: black;" title="Update" onclick="like_change()"></i></button>
+									</div> 
+								</form>	
+							</div>
+							<script>
+								$(document).on('submit','#delete-comment-{{post.id}}-{{comment.id}}', function(e){
+									e.preventDefault()
+									$.ajax({
+										type: 'POST',
+										url: '/delete_comment/{{post.id}}/{{comment.id}}',
+										success:function(){
+											window.location.reload()
+										}
+									})
+								})
+
+								$(document).on('submit','#edit-comments-{{post.id}}-{{comment.id}}', function(e){
+									e.preventDefault()
+									$.ajax({
+										type: 'POST',
+										url: '/edit_comment/{{post.id}}/{{comment.id}}',
+										data: {
+											edited_comment: $('#comment-edited-{{post.id}}-{{comment.id}}').val()
+
+										},
+										success:function(){
+											window.location.reload()
+											$("#comment-edited-{{post.id}}-{{comment.id}}").val('')
+										}
+									})
+								})
+							</script>
+
+							{% endfor %}
+							<form method="post" action="/create_comment/{{post.id}}" id = 'create-comment-{{post.id}}'>
+								<div class="card-body d-flex justify-content-between">
+									<input type="text" placeholder="Comment something..." name="comment" id = "comment-{{post.id}}" style="width: 95%; border-radius: 16px; border: 1px solid rgb(0, 0, 0, 0.1) ; background-color: transparent; text-indent: 15px;">
+									<button type="submit" style="border: transparent; background-color: transparent;" id="submit" value = '{{post.id}}' title="Comment" ><i class="bi bi-send" style="color: black;" ></i></button>
+								</div>	
+							</form>
+							<br>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+			<script>
+				/*
+				$(document).on('submit','#create-comment-{{post.id}}', function(e){
+					e.preventDefault()
+					$.ajax({
+						type:'POST',
+						url:'/create_comment/{{post.id}}',
+						data:{
+							comment: $('#comment-{{post.id}}').val()
+
+						},
+						success:function(){
+							
+							window.location.reload()
+							$("#comment-{{post.id}}").val('')
+							
+							
+							
+						}
+					})
+				})
+				*/
+
+				$(document).on('submit','#delete-post-{{post.id}}', function(e){
+					e.preventDefault()
+					$.ajax({
+						type:'POST',
+						url:'/delete_post/{{post.id}}',
+						
+						success:function(){
+							
+							window.location.reload()
+							
+							
+						}
+					})
+				})
+
+				$(document).on('submit','#like-post-{{post.id}}', function(e){
+					e.preventDefault()
+					$.ajax({
+						type: 'POST',
+						url: '/like/{{post.id}}/{{current_user.id}}',
+						
+						success:function(){
+							
+							window.location.reload()
+							
+						}
+					})
+				})
+
+				
+			</script>
+			<br>
+		{% endfor %}
+		
+		{% if scrollable == "true" %}
+			<script>
+				var scrollable = 1
+				var scroll_ = '{{section}}'
+				if (scrollable != 0){
+					$(function(){
+						$(document).ready(function(){
+							$(`#comments-${scroll_}`).collapse('toggle')
+							
+						})
+						location.hash = `#${scroll_}`
+						$(`#blink-${scroll_}`).toggleClass("blinking")
+						scrollable = 0
+						
+					})
+				}
+			</script>
+		{% endif %}
+
+		<script>
+			
+			function picClose(){
+				document.getElementById("temPic").style.display = "none"
+				document.getElementById("picButton").style.display = 'none'
+
+				var x = document.querySelector("#image-input1")
+				x.value = ''
+			}
+		</script>
+		<script>
+			document.getElementById("picButton").style.display = 'none'
+
+		</script>	
+		<script>
+			$(document).ready(() => {
+					$("#image-input1").change(function () {
+							const file = this.files[0];
+							if (file) {
+									let reader = new FileReader();
+									reader.onload = function (event) {
+											$("#temPic")
+												.attr("src", event.target.result);
+									};
+									reader.readAsDataURL(file);
+							}
+					});
+			});
+		</script>	
+		<script>
+			var error = document.getElementById("error");
+
+			error.style.display = 'none';
+
+			function fileCheck(){
+				const fi = document.getElementById('file-input');
+        // Check if any file is selected.
+        if (fi.files.length > 0) {
+					for (const i = 0; i <= fi.files.length - 1; i++) {
+						
+						const fsize = fi.files.item(i).size;
+                const file = Math.round((fsize / 1024));
+                // The size of the file.
+                if (file >= 20*1024) {
+									error.style.display = 'block';
+										document.getElementById('error-content').innerHTML = '<strong>' + "File is too big, please select a file less than 20 MB!" + '</strong>';
+                } else if (file < 0) {
+									error.style.display = 'block';
+										document.getElementById('error-content').innerHTML =  "No file selected!";
+                } 
+							}
+						}
+					}
+					
+				function fileCheck2(){
+					document.getElementById("temPic").style.display = 'block'
+					document.getElementById("picButton").style.display = 'block'
+
+					const fi = document.getElementById('image-input1');
+					// Check if any file is selected.
+					if (fi.files.length > 0) {
+							for (const i = 0; i <= fi.files.length - 1; i++) {
+		
+									const fsize = fi.files.item(i).size;
+									const file = Math.round((fsize / 1024));
+									// The size of the file.
+									if (file >= 20*1024) {
+											error.style.display = 'block';
+											document.getElementById('error-content').innerHTML = '<strong>' + "File is too big, please select a file less than 20 MB!" + '</strong>';
+									} else if (file < 0) {
+											error.style.display = 'block';
+											document.getElementById('error-content').innerHTML =  "No file selected!";
+									}
+							}
+						}
+
+			
+				
+    	}
+
+			
+			function close1(){
+				error.style.display = 'none';
+			}
+
+		</script>
+	
+		<script src="{{url_for('static', filename='js/main.js')}}"></script>
+		
+		<script>
+			function mode(){
+				x = document.getElementById("button1");
+				m = document.getElementById("button2");
+				n = document.getElementById("button3");
+				y= document.body;
+				z = document.getElementById("icon1");
+				j = document.getElementById("sort");
+				
+
+				x.classList.toggle("mode2-content");
+				y.classList.toggle("dark-mode");
+				m.classList.toggle("mode2-content");
+				n.classList.toggle("mode2-content");
+				j.classList.toggle("mode2-content")
+				
+				if (z.className == "bi bi-moon-fill"){
+					z.className = "bi bi-brightness-high-fill"
+				}else{
+					z.className = "bi bi-moon-fill"
+				}
+
+			}
+
+
+
+
+
+		</script>
+	
+</body>
+</html>

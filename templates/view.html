@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blocks</title>
+    <link rel="icon" href="{{url_for('static',filename = 'images/logo.ico')}}" >
+    <style>
+      .img-container {
+        text-align: center;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <span class="img-container"> <!-- Inline parent element -->
+      <img src={{img_path}} style="width: 50%">
+    </span>
+    
+  </body>
+</html>
